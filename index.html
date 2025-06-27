@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento Rápido - [Seu Negócio]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #075E54; /* Cor principal do WhatsApp */
+            --secondary-color: #25D366; /* Cor secundária do WhatsApp */
+            --text-color: #333;
+            --background-light: #f7f7f7;
+            --background-dark: #e0e0e0;
+            --border-color: #ddd;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px var(--shadow-light);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: calc(100% - 22px); /* Ajuste para padding e borda */
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+            transform: scale(1.2); /* Aumenta um pouco o checkbox */
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex; /* Para centralizar ícone e texto */
+            align-items: center;
+            justify-content: center;
+        }
+
+        button i {
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .result-actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            /* Remover gap: 15px; se houver apenas um botão */
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-actions a, .result-actions button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none; /* Remove a borda padrão do botão */
+            cursor: pointer;
+            width: 100%; /* Ocupa a largura disponível no flexbox */
+            text-align: center;
+            display: flex; /* Para centralizar ícone e texto */
+            align-items: center;
+            justify-content: center;
+        }
+        .result-actions a i, .result-actions button i {
+            margin-right: 8px;
+        }
+
+        .result-actions a:hover, .result-actions button:hover {
+            background-color: #054a43;
+            transform: translateY(-2px);
+        }
+
+        .horarios-adicionais {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-dark);
+            display: none; /* Escondido por padrão */
+        }
+        .horarios-adicionais .form-group {
+            margin-bottom: 15px;
+        }
+        .horarios-adicionais label {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        .horarios-adicionais input[type="time"] {
+            margin-bottom: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            button, .result-actions a, .result-actions button {
+                padding: 12px 20px;
+                font-size: 1em;
+                flex-direction: column; /* Empilha ícone e texto em telas pequenas */
+            }
+            button i, .result-actions a i, .result-actions button i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            .result-actions {
+                flex-direction: column; /* Empilha os botões */
+                /* Remover gap: 10px; se houver apenas um botão */
+            }
+        }
+
+        /* POP-UP STYLES */
+        .popup-overlay {
+            display: none; /* ESCONDIDO POR PADRÃO - ESSENCIAL PARA O POP-UP */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center; /* Usado com 'display: flex' */
+            align-items: center; /* Usado com 'display: flex' */
+            z-index: 1000; /* Ensure it's on top */
+            animation: fadeInOverlay 0.3s ease-out;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 20px; /* Add some margin for smaller screens */
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .popup-content p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin-bottom: 25px;
+        }
+
+        .popup-content button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            width: auto; /* Override button width from main CSS */
+            display: inline-block; /* Make it block for full width, but allow it to shrink */
+        }
+
+        .popup-content button:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* Show the popup */
+        .popup-overlay.show {
+            display: flex; /* Altera para flexbox para exibir */
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="reminderPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>Lembrete Importante!</h2>
+            <p>
+                <strong>Atenção!</strong> Após enviar sua solicitação pelo WhatsApp, você também pode adicionar um lembrete por áudio! Basta informar no áudio o dia e a hora desejados. Para cancelar um lembrete já agendado, é só enviar a palavra 'CANCELAR'.
+            </p>
+            <button onclick="closePopup()">Entendi!</button>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Lembrador de data!</h1>
+        <p style="text-align: center; margin-top: -15px; margin-bottom: 30px; color: #666;">Preencha os campos abaixo para o lembrador de data avisa-lo no dia escolhido.</p>
+
+        <div class="form-group">
+            <label for="dataAgendamento">Data para ser lembrado:</label>
+            <input type="date" id="dataAgendamento" required>
+        </div>
+
+        <div class="form-group">
+            <label for="horaAgendamento">Horário para o lembrete (primeiro horário):</label>
+            <input type="time" id="horaAgendamento" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantidadeVezes">Quantas vezes ao dia (opcional):</label>
+            <select id="quantidadeVezes">
+                <option value="1">Apenas 1 vez</option>
+                <option value="2">2 vezes ao dia</option>
+                <option value="3">3 vezes ao dia</option>
+                <option value="0">Não se aplica / Não sei ainda</option>
+            </select>
+        </div>
+
+        <div id="horariosAdicionais" class="horarios-adicionais">
+            <p style="margin-top: 0; font-weight: bold; color: var(--primary-color);">Defina os horários adicionais:</p>
+            <div class="form-group" id="horario2Group" style="display: none;">
+                <label for="horaAgendamento2">Segundo Horário:</label>
+                <input type="time" id="horaAgendamento2">
+            </div>
+            <div class="form-group" id="horario3Group" style="display: none;">
+                <label for="horaAgendamento3">Terceiro Horário:</label>
+                <input type="time" id="horaAgendamento3">
+            </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="avisarDiaAntes">
+            <label for="avisarDiaAntes" style="margin-bottom: 0;">Quero ser avisado um dia antes!</label>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="avisarDiaVencimento" checked>
+            <label for="avisarDiaVencimento" style="margin-bottom: 0;">Quero ser avisado no dia do agendamento!</label>
+        </div>
+
+        <div class="form-group">
+            <label for="mensagemAdicional">Informações Adicionais (opcional):</label>
+            <textarea id="mensagemAdicional" rows="4" placeholder="Ex: Tipo de serviço, observações, etc."></textarea>
+        </div>
+
+        <div class="result-actions" style="gap: 0;">
+            <a id="linkWhatsApp" href="#" target="_blank">
+                <i class="fab fa-whatsapp"></i> Enviar Solicitação via WhatsApp
+            </a>
+            </div>
+    </div>
+    <script>
+        const SEU_NUMERO_FIXO = "16502234435"; // Seu número de WhatsApp fixo (com DDI, sem espaços ou caracteres)
+        // Keys para localStorage
+        const LS_DATA_KEY = 'agendamento_data';
+        const LS_HORA_KEY = 'agendamento_hora';
+        const LS_QTD_VEZES_KEY = 'agendamento_qtd_vezes';
+        const LS_HORA2_KEY = 'agendamento_hora2';
+        const LS_HORA3_KEY = 'agendamento_hora3';
+        const LS_AVISAR_ANTES_KEY = 'agendamento_avisar_antes';
+        const LS_AVISAR_VENC_KEY = 'agendamento_avisar_vencimento';
+        const LS_OBS_KEY = 'agendamento_observacoes';
+
+        // Elementos do DOM para facilitar o acesso
+        const dataAgendamentoInput = document.getElementById('dataAgendamento');
+        const horaAgendamentoInput = document.getElementById('horaAgendamento');
+        const quantidadeVezesSelect = document.getElementById('quantidadeVezes');
+        const horariosAdicionaisDiv = document.getElementById('horariosAdicionais');
+        const horario2Group = document.getElementById('horario2Group');
+        const horario2Input = document.getElementById('horaAgendamento2');
+        const horario3Group = document.getElementById('horario3Group');
+        const horario3Input = document.getElementById('horaAgendamento3');
+        const avisarDiaAntesCheckbox = document.getElementById('avisarDiaAntes');
+        const avisarDiaVencimentoCheckbox = document.getElementById('avisarDiaVencimento');
+        const mensagemAdicionalTextarea = document.getElementById('mensagemAdicional');
+        const linkWhatsAppElement = document.getElementById('linkWhatsApp');
+
+        // Funções de formatação e lógica
+        function formatarData(dataISO) {
+            if (!dataISO) return 'Não informada';
+            const [ano, mes, dia] = dataISO.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function atualizarLinkWhatsApp() {
+            const data = dataAgendamentoInput.value;
+            const hora = horaAgendamentoInput.value;
+            const qtdVezes = quantidadeVezesSelect.value;
+            const avisarAntes = avisarDiaAntesCheckbox.checked;
+            const avisarVencimento = avisarDiaVencimentoCheckbox.checked;
+            const obs = mensagemAdicionalTextarea.value.trim();
+
+            let mensagemParaVoce = `*✨ Nova Solicitação de Agendamento ✨*\n\n`;
+            mensagemParaVoce += `*Me lembre esse mesmo dia de cada mês:* ${formatarData(data)}\n`;
+            mensagemParaVoce += `*Horário Principal:* ${hora || 'Não informado'}\n`;
+
+            if (qtdVezes === '2') {
+                mensagemParaVoce += `*Segundo Horário:* ${horario2Input.value || 'Não informado'}\n`;
+            } else if (qtdVezes === '3') {
+                mensagemParaVoce += `*Segundo Horário:* ${horario2Input.value || 'Não informado'}\n`;
+                mensagemParaVoce += `*Terceiro Horário:* ${horario3Input.value || 'Não informado'}\n`;
+            }
+
+            if (qtdVezes !== '0') {
+                 mensagemParaVoce += `*Frequência:* ${qtdVezes} vez(es) ao dia\n`;
+            } else {
+                 mensagemParaVoce += `*Frequência:* Não se aplica / A definir\n`;
+            }
+
+            mensagemParaVoce += `*Lembrete (dia anterior):* ${avisarAntes ? 'Sim ✅' : 'Não ❌'}\n`;
+            mensagemParaVoce += `*Lembrete (dia do agendamento):* ${avisarVencimento ? 'Sim ✅' : 'Não ❌'}\n\n`;
+
+            // ADICIONANDO AS INFORMAÇÕES FIXAS DO PIX E VALORES AQUI
+            mensagemParaVoce += `*Detalhes do Pagamento:*\n`;
+            mensagemParaVoce += `*Pix:* 11947406124\n`;
+            mensagemParaVoce += `*Nome:* Waldemar Jose Luiz\n`;
+            mensagemParaVoce += `*Enviar Comprovante para:* 11947406124\n`;
+            mensagemParaVoce += `*Valor:* R$ 30,00 (R$ 35,00 se precisar atrasar)\n`;
+            // FIM DAS INFORMAÇÕES FIXAS
+
+            if (obs !== '') {
+                mensagemParaVoce += `*Observações Adicionais:*\n${obs}\n`;
+            }
+
+            const mensagemCodificada = encodeURIComponent(mensagemParaVoce);
+            const link = `https://wa.me/${SEU_NUMERO_FIXO}?text=${mensagemCodificada}`;
+            linkWhatsAppElement.href = link;
+
+            // SALVAR NO LOCALSTORAGE
+            localStorage.setItem(LS_DATA_KEY, data);
+            localStorage.setItem(LS_HORA_KEY, hora);
+            localStorage.setItem(LS_QTD_VEZES_KEY, qtdVezes);
+            localStorage.setItem(LS_HORA2_KEY, horario2Input.value);
+            localStorage.setItem(LS_HORA3_KEY, horario3Input.value);
+            localStorage.setItem(LS_AVISAR_ANTES_KEY, avisarAntes);
+            localStorage.setItem(LS_AVISAR_VENC_KEY, avisarVencimento);
+            localStorage.setItem(LS_OBS_KEY, obs);
+        }
+
+        // Função copiarLink removida
+
+        function gerenciarHorariosAdicionais() {
+            const qtdVezes = quantidadeVezesSelect.value;
+            if (qtdVezes === '2') {
+                horariosAdicionaisDiv.style.display = 'block';
+                horario2Group.style.display = 'block';
+                horario3Group.style.display = 'none';
+                horario3Input.value = ''; // Limpa o valor
+            } else if (qtdVezes === '3') {
+                horariosAdicionaisDiv.style.display = 'block';
+                horario2Group.style.display = 'block';
+                horario3Group.style.display = 'block';
+            } else {
+                horariosAdicionaisDiv.style.display = 'none';
+                horario2Group.style.display = 'none';
+                horario3Group.style.display = 'none';
+                horario2Input.value = ''; // Limpa os valores
+                horario3Input.value = '';
+            }
+            atualizarLinkWhatsApp(); // Atualiza o link quando a seleção muda
+        }
+
+        // --- Event Listeners para atualização automática ---
+        dataAgendamentoInput.addEventListener('input', atualizarLinkWhatsApp);
+        horaAgendamentoInput.addEventListener('input', atualizarLinkWhatsApp);
+        quantidadeVezesSelect.addEventListener('change', gerenciarHorariosAdicionais);
+        horario2Input.addEventListener('input', atualizarLinkWhatsApp);
+        horario3Input.addEventListener('input', atualizarLinkWhatsApp);
+        avisarDiaAntesCheckbox.addEventListener('change', atualizarLinkWhatsApp);
+        avisarDiaVencimentoCheckbox.addEventListener('change', atualizarLinkWhatsApp);
+        mensagemAdicionalTextarea.addEventListener('input', atualizarLinkWhatsApp);
+
+        // --- JavaScript para o Pop-up ---
+        const popup = document.getElementById('reminderPopup');
+        // Usamos sessionStorage para que o pop-up apareça uma vez por sessão (ao fechar e reabrir o navegador, ele aparece de novo).
+        // Se quiser que apareça UMA ÚNICA VEZ para sempre, mude para localStorage.
+        const hasSeenPopup = sessionStorage.getItem('hasSeenReminderPopup');
+
+        function showPopup() {
+            if (!hasSeenPopup) { // Only show if not seen before in this session
+                popup.classList.add('show');
+            }
+        }
+
+        function closePopup() {
+            popup.classList.remove('show');
+            sessionStorage.setItem('hasSeenReminderPopup', 'true'); // Mark as seen for this session
+        }
+
+        // --- Inicialização ao carregar a página ---
+        window.onload = function() {
+            // Define a data mínima para hoje
+            const today = new Date();
+            const year = today.getFullYear();
+            let month = today.getMonth() + 1; // Months start at 0!
+            let day = today.getDate();
+
+            if (day < 10) day = '0' + day;
+            if (month < 10) month = '0' + month;
+
+            const minDate = year + '-' + month + '-' + day;
+            dataAgendamentoInput.setAttribute('min', minDate);
+
+            // CARREGAR DADOS DO LOCALSTORAGE
+            dataAgendamentoInput.value = localStorage.getItem(LS_DATA_KEY) || '';
+            horaAgendamentoInput.value = localStorage.getItem(LS_HORA_KEY) || '';
+            quantidadeVezesSelect.value = localStorage.getItem(LS_QTD_VEZES_KEY) || '1'; // Default para '1'
+            horario2Input.value = localStorage.getItem(LS_HORA2_KEY) || '';
+            horario3Input.value = localStorage.getItem(LS_HORA3_KEY) || '';
+            avisarDiaAntesCheckbox.checked = (localStorage.getItem(LS_AVISAR_ANTES_KEY) === 'true');
+            avisarDiaVencimentoCheckbox.checked = (localStorage.getItem(LS_AVISAR_VENC_KEY) !== 'false');
+            mensagemAdicionalTextarea.value = localStorage.getItem(LS_OBS_KEY) || '';
+
+            // Garante que o estado dos horários adicionais e o link estejam atualizados na primeira carga
+            gerenciarHorariosAdicionais();
+
+            // Mostra o pop-up após a inicialização de tudo
+            showPopup();
+        };
+    </script>
+</body>
+</html>
